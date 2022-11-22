@@ -1,25 +1,30 @@
 import { StatusBar } from "expo-status-bar";
-import { Image, StyleSheet, TextInput } from "react-native";
-import { useState } from "react";
+import {
+  Image,
+  Pressable,
+  StyleSheet,
+  TextInput,
+  View,
+  KeyboardAvoidingView,
+} from "react-native";
+import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faUser, faKey, faEye } from "@fortawesome/free-solid-svg-icons";
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Button } from "@react-native-material/core";
+import {
+  faEnvelope,
+  faKey,
+  faUser,
+  faEye,
+} from "@fortawesome/free-solid-svg-icons";
 
-import { Text, View } from "../components/Themed";
-
-export default function ModalScreen({navigation}: any) {
+export default function RegistrationScreen() {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [passwordInvisible, setpasswordInvisible] = useState(true);
+  const [passwordInvisible, setPasswordInvisible] = useState(true);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Prijava</Text>
-      <Text style={styles.mainText}>
-        Uporaba računa Vam omogoča shranjevanje preteklih iger.
-      </Text>
-
       <View style={styles.inputRow}>
         <FontAwesomeIcon icon={faUser} color={"white"} />
         <TextInput
@@ -29,9 +34,24 @@ export default function ModalScreen({navigation}: any) {
           value={username}
           onChangeText={(text) => setUsername(text)}
           autoCapitalize="none"
+          textContentType="username"
+          spellCheck={false}
         />
       </View>
-
+      <View style={styles.inputRow}>
+        <FontAwesomeIcon icon={faEnvelope} color={"white"} />
+        <TextInput
+          style={styles.inputBox}
+          placeholder="Elektronski naslov"
+          placeholderTextColor="gray"
+          value={email}
+          onChangeText={(text) => setEmail(text)}
+          autoCapitalize="none"
+          keyboardType="email-address"
+          textContentType="emailAddress"
+          spellCheck={false}
+        />
+      </View>
       <View style={styles.inputRow}>
         <FontAwesomeIcon icon={faKey} color={"white"} />
         <TextInput
@@ -41,47 +61,25 @@ export default function ModalScreen({navigation}: any) {
           value={password}
           onChangeText={(text) => setPassword(text)}
           secureTextEntry={passwordInvisible}
+          textContentType="password"
+          spellCheck={false}
         />
-        <FontAwesomeIcon icon={faEye} color={"white"} />
+        <Pressable
+          onPress={() =>
+            setPasswordInvisible((passwordInvisible) => !passwordInvisible)
+          }
+        >
+          <FontAwesomeIcon icon={faEye} color={"white"} />
+        </Pressable>
       </View>
-
-      <Text style={styles.secondaryText}>
-        Še niste registrirani?
-      </Text>
-      <Text style={styles.registrationText} onPress={() => navigation.navigate('Registration')}>Registracija</Text>
-
-      {/* skrit StatusBar */}
-      <StatusBar hidden={true} />
+      <View style={styles.submitButtonRow}>
+        <Button title="Registracija" color="white" />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    marginBottom: 20,
-    marginTop: 120
-  },
-  mainText: {
-    fontSize: 20,
-    paddingHorizontal: 60,
-    textAlign: "center",
-    marginBottom: 30,
-  },
-  secondaryText: {
-    fontSize: 20,
-    paddingHorizontal: 60,
-    textAlign: "center",
-    color: "white",
-    marginTop: 220
-  },
-  registrationText: {
-    color: "#ffffff53",
-    fontWeight: 'bold',
-    textDecorationLine: 'underline',
-    fontSize: 20,
-  },
   inputBox: {
     color: "white",
     fontSize: 18,
@@ -105,5 +103,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     zIndex: 1,
+  },
+  submitButtonRow: {
+    marginTop: 10,
+    marginBottom: 40
   },
 });
