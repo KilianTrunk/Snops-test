@@ -9,16 +9,18 @@ import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
 import { ColorSchemeName, Pressable } from 'react-native';
-
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
-import ModalScreen from '../screens/ModalScreen';
+import LoginScreen from '../screens/LoginScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import TabOneScreen from '../screens/TabOneScreen';
 import TabTwoScreen from '../screens/TabTwoScreen';
 import RegistrationScreen from '../screens/RegistrationScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
+import SignOutScreen from '../screens/SignOutScreen';
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faRightFromBracket, faUser } from "@fortawesome/free-solid-svg-icons";
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -42,8 +44,9 @@ function RootNavigator() {
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
-        <Stack.Screen name="Modal" component={ModalScreen} options={{ title: 'Prijava' }} />
+        <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Prijava' }} />
         <Stack.Screen name="Registration" component={RegistrationScreen} options={{ title: 'Registracija' }} />
+        <Stack.Screen name="SignOut" component={SignOutScreen} options={{ title: 'Odjava' }} />
       </Stack.Group>
     </Stack.Navigator>
   );
@@ -72,16 +75,20 @@ function BottomTabNavigator() {
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
           headerRight: () => (
             <Pressable
-              onPress={() => navigation.navigate('Modal')}
+              onPress={() => navigation.navigate('Login')}
               style={({ pressed }) => ({
                 opacity: pressed ? 0.5 : 1,
               })}>
-              <FontAwesome
-                name="info-circle"
-                size={25}
-                color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
-              />
+              <FontAwesomeIcon icon={faUser} color={"white"} style={{ marginRight: 15 }} />
+            </Pressable>
+          ),
+          headerLeft: () => (
+            <Pressable
+              onPress={() => navigation.navigate('SignOut')}
+              style={({ pressed }) => ({
+                opacity: pressed ? 0.5 : 1,
+              })}>
+              <FontAwesomeIcon icon={faRightFromBracket} color={"white"} style={{ marginLeft: 15 }} />
             </Pressable>
           ),
         })}

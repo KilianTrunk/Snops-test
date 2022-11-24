@@ -1,17 +1,30 @@
-import { StatusBar } from "expo-status-bar";
-import { Image, StyleSheet, TextInput } from "react-native";
+import { Pressable, StyleSheet, TextInput } from "react-native";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faUser, faKey, faEye } from "@fortawesome/free-solid-svg-icons";
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
+import { faEnvelope, faKey, faEye } from "@fortawesome/free-solid-svg-icons";
+import { Button } from "@react-native-material/core";
 import { Text, View } from "../components/Themed";
+import firebase from '../database/firebase';
 
-export default function ModalScreen({navigation}: any) {
-  const [username, setUsername] = useState("");
+export default function LoginScreen({ navigation }: any) {
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [passwordInvisible, setpasswordInvisible] = useState(true);
+  const [passwordInvisible, setPasswordInvisible] = useState(true);
+
+  const userLogin = () => {
+    if (password === '' || email === '') {
+      alert('Vnesite manjkajoče podatke!')
+    } else {
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password)
+        .then((res: any) => {
+          alert('Prijava je bila uspešna!');
+          setEmail('');
+          setPassword('');
+        })
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -21,14 +34,17 @@ export default function ModalScreen({navigation}: any) {
       </Text>
 
       <View style={styles.inputRow}>
-        <FontAwesomeIcon icon={faUser} color={"white"} />
+        <FontAwesomeIcon icon={faEnvelope} color={"white"} />
         <TextInput
           style={styles.inputBox}
-          placeholder="Uporabniško ime"
+          placeholder="Elektronski naslov"
           placeholderTextColor="gray"
-          value={username}
-          onChangeText={(text) => setUsername(text)}
+          value={email}
+          onChangeText={(text) => setEmail(text)}
           autoCapitalize="none"
+          keyboardType="email-address"
+          textContentType="emailAddress"
+          spellCheck={false}
         />
       </View>
 
@@ -42,16 +58,24 @@ export default function ModalScreen({navigation}: any) {
           onChangeText={(text) => setPassword(text)}
           secureTextEntry={passwordInvisible}
         />
-        <FontAwesomeIcon icon={faEye} color={"white"} />
+
+        <Pressable
+          onPress={() =>
+            setPasswordInvisible((passwordInvisible) => !passwordInvisible)
+          }
+        >
+          <FontAwesomeIcon icon={faEye} color={"white"} />
+        </Pressable>
+      </View>
+
+      <View style={styles.submitButtonRow}>
+        <Button title="Prijava" color="white" onPress={() => userLogin()} />
       </View>
 
       <Text style={styles.secondaryText}>
         Še niste registrirani?
       </Text>
       <Text style={styles.registrationText} onPress={() => navigation.navigate('Registration')}>Registracija</Text>
-
-      {/* skrit StatusBar */}
-      <StatusBar hidden={true} />
     </View>
   );
 }
@@ -67,14 +91,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     paddingHorizontal: 60,
     textAlign: "center",
-    marginBottom: 30,
+    marginBottom: 20,
   },
   secondaryText: {
     fontSize: 20,
     paddingHorizontal: 60,
     textAlign: "center",
     color: "white",
-    marginTop: 220
+    marginTop: 150
   },
   registrationText: {
     color: "#ffffff53",
@@ -105,5 +129,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     zIndex: 1,
+  },
+  submitButtonRow: {
+    marginTop: 10,
+    marginBottom: 40
   },
 });

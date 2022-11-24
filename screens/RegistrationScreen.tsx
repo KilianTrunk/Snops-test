@@ -1,11 +1,8 @@
-import { StatusBar } from "expo-status-bar";
 import {
-  Image,
   Pressable,
   StyleSheet,
   TextInput,
-  View,
-  KeyboardAvoidingView,
+  View
 } from "react-native";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -16,12 +13,32 @@ import {
   faUser,
   faEye,
 } from "@fortawesome/free-solid-svg-icons";
+import firebase from '../database/firebase';
 
 export default function RegistrationScreen() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordInvisible, setPasswordInvisible] = useState(true);
+
+  const registerUser = () => {
+    if (email === '' || password === '' || username === '') {
+      alert('Vnesite manjkajoče podatke!')
+    } else {
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then((res: any) => {
+          res.user.updateProfile({
+            displayName: username
+          })
+          alert('Registracija je bila uspešna! Prosimo, da se prijavite.');
+          setUsername('');
+          setEmail('');
+          setPassword('');
+        })
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -73,7 +90,7 @@ export default function RegistrationScreen() {
         </Pressable>
       </View>
       <View style={styles.submitButtonRow}>
-        <Button title="Registracija" color="white" />
+        <Button title="Registracija" color="white" onPress={() => registerUser()} />
       </View>
     </View>
   );
